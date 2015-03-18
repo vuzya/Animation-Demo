@@ -45,6 +45,9 @@ public class MainActivity extends ActionBarActivity
         Fragment fragment = null;
         switch (position){
             case 0:
+                fragment = new PlaneOldAnimationFragment();
+                break;
+            case 2:
             default:
                 fragment = new PropertyAnimatorFragment();
         }

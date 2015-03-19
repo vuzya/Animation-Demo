@@ -11,5 +11,6 @@
         android:padding="50dip"
         android:clipToPadding="false"
         android:clipChildren="false"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical"
+        android:gravity="center"></LinearLayout>
 </ScrollView>

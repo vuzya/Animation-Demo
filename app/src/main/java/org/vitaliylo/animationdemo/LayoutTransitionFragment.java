@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.animation.TimeInterpolator;
 import android.animation.TypeEvaluator;
 import android.os.Bundle;
 import android.util.Property;
@@ -14,12 +15,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.util.Random;
 
 /**
  * Created by vitaliylo on 3/18/15.
@@ -66,7 +71,7 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
                         transtionContainer.removeView(v);
                     }
                 });
-                transtionContainer.addView(btn, 0);
+                transtionContainer.addView(btn, 0, new ViewGroup.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
                 break;
             case 3: {
                 Toast.makeText(getActivity(), "Transitions are awesome now", Toast.LENGTH_LONG).show();
@@ -77,17 +82,59 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
                         LayoutTransition.CHANGE_APPEARING |
                         LayoutTransition.CHANGE_DISAPPEARING);
 
-                PropertyValuesHolder pvhScrollX = PropertyValuesHolder.ofFloat("scaleX", 0, 1);
-                PropertyValuesHolder pvhScrollY = PropertyValuesHolder.ofFloat("scaleY", 0, 1);
-                Animator appear = ObjectAnimator.ofPropertyValuesHolder((Object) null, pvhScrollX, pvhScrollY);
-                appear.setInterpolator(new OvershootInterpolator());
+//                PropertyValuesHolder pvhScrollX = PropertyValuesHolder.ofFloat("scaleX", 0f, 1f);
+//                PropertyValuesHolder pvhScrollY = PropertyValuesHolder.ofFloat("scaleY", 0f, 1f);
+//                Animator appear = ObjectAnimator.ofPropertyValuesHolder((Object) null, pvhScrollX, pvhScrollY);
+//                appear.setInterpolator(new OvershootInterpolator());
 
+
+                AnimatorSet appear = new AnimatorSet();
+//                appear.setInterpolator(new OvershootInterpolator());
                 {
+                    ObjectAnimator fall = ObjectAnimator.ofPropertyValuesHolder((Object) null,
+                            PropertyValuesHolder.ofFloat("alpha", 0f, 1f, 1f, 1f, 1f), // more points to finish faster
+                            PropertyValuesHolder.ofFloat("scaleX", 1.75f, 1f),
+                            PropertyValuesHolder.ofFloat("scaleY", 1.75f, 1f),
+//                            PropertyValuesHolder.ofFloat("translationZ", 250f, 0f),
+                            PropertyValuesHolder.ofFloat("translationY", -150f, 0f),
+//                            PropertyValuesHolder.ofFloat("cameraDistance", 500f, 0f),
+                            PropertyValuesHolder.ofFloat("rotationY", 45f, -45f, 15f, 0f),
+                            PropertyValuesHolder.ofFloat("rotationX", -45f, 55f, -15f, 0f)
+                    );
+                    fall.setInterpolator(new DecelerateInterpolator());
 
+
+                    ObjectAnimator shake = ObjectAnimator.ofFloat((View) null, new ParentPropertyWrapper(new Property<View, Float>(float.class, "scale") {
+                        @Override
+                        public Float get(View object) {
+                            return object.getScaleX();
+                        }
+
+                        @Override
+                        public void set(View object, Float value) {
+                            object.setScaleX(value);
+                            object.setScaleY(value);
+                        }
+                    }), 0f, 1f);
+                    shake.setInterpolator(new TimeInterpolator() {
+
+                        @Override
+                        public float getInterpolation(float input) {
+                            if (input <= 0.95f || input == 1f) {
+                                return 1f;
+                            }
+
+                            return (float) Math.random() * .05f + 0.97f;
+                        }
+                    });
+//                    shake.setDuration(100);
+//                    shake.setStartDelay(1900);
+
+                    appear.playTogether(fall, shake);
                 }
 
 
-                /*AnimatorSet disappear = new AnimatorSet();
+                AnimatorSet disappear = new AnimatorSet();
                 {
                     PropertyValuesHolder pvhScrollX_ = PropertyValuesHolder.ofFloat("scaleX", 1f, 0.1f);
                     PropertyValuesHolder pvhScrollY_ = PropertyValuesHolder.ofFloat("scaleY", 1f, 0.1f);
@@ -97,15 +144,16 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
                     a1.setInterpolator(new AnticipateInterpolator());
                     a2.setInterpolator(new AnticipateInterpolator());
                     disappear.playSequentially(a1, a2);
-                }*/
+                }
 
 
-                ObjectAnimator disappear =
-                        ObjectAnimator.ofPropertyValuesHolder((Object) null,
-                        pvhScrollX, pvhScrollY);
+//                ObjectAnimator disappear =
+//                        ObjectAnimator.ofPropertyValuesHolder((Object) null,
+//                        pvhScrollX, pvhScrollY);
 
 
                 transition.setAnimator(LayoutTransition.APPEARING, appear);
+                transition.setDuration(LayoutTransition.APPEARING, 2000);
 
                 transition.setAnimator(LayoutTransition.DISAPPEARING, disappear);
                 transition.setStartDelay(LayoutTransition.CHANGE_DISAPPEARING, 2 * transition.getDuration(LayoutTransition.DISAPPEARING));
@@ -129,22 +177,30 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
         /**
          * A constructor that takes an identifying name and {@link #getType() type} for the property.
          *
-         * @param type
-         * @param name
+         * @param prop
          */
-        public ParentPropertyWrapper(Class<Float> type, String name, Property<View, Float> prop) {
-            super(type, name);
+        public ParentPropertyWrapper(Property<View, Float> prop) {
+            super(float.class, prop.getName());
             this.prop = prop;
         }
 
         @Override
         public Float get(View object) {
-            return null;
+            return prop.get(getParent(object));
         }
 
         @Override
         public void set(View object, Float value) {
-            super.set(object, value);
+            prop.set(getParent(object), value);
+        }
+
+        private View getParent(View object) {
+            final View parent = (View) object.getParent();
+            if (parent != null) {
+                return parent;
+            } else {
+                return object;
+            }
         }
     }
 }

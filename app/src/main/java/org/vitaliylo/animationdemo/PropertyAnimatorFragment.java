@@ -75,13 +75,28 @@ public class PropertyAnimatorFragment extends Fragment {
 
         for (View view : images) {
             Path path = getPath(0, 0, endX, endY);
-            PropertyValuesHolder.ofObject(POSITION_PROPERTY, null, path);
-            ObjectAnimator animator = ObjectAnimator.ofObject(view, POSITION_PROPERTY, null, path);
+//            PropertyValuesHolder.ofObject(POSITION_PROPERTY, null, path);
+//            ObjectAnimator animator = ObjectAnimator.ofObject(view, POSITION_PROPERTY, null, path);
+            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(view,
+                    PropertyValuesHolder.ofObject(POSITION_PROPERTY, null, path),
+                    PropertyValuesHolder.ofFloat("scaleX", 0.5f, 1f),
+                    PropertyValuesHolder.ofFloat("scaleY", 0.5f, 1f),
+                    PropertyValuesHolder.ofFloat("rotationY", 45f, -45f, 15f, 0f),
+                    PropertyValuesHolder.ofFloat("rotationX", -45f, 55f, -15f, 0f));
             animator.setInterpolator(new AccelerateInterpolator());
             animator.setDuration(400);
             animator.setStartDelay(delay);
-//            animator.start();
-            animators.add(animator);
+
+//            animators.add(animator);
+            AnimatorSet animatorSet = new AnimatorSet();
+            ObjectAnimator animator1 = ObjectAnimator.ofPropertyValuesHolder(view,
+                    PropertyValuesHolder.ofFloat("alpha", 1f, 0f),
+                    PropertyValuesHolder.ofFloat("scaleX", 1f, 1.5f),
+                    PropertyValuesHolder.ofFloat("scaleY", 1f, 1.5f)
+            );
+            animator1.setDuration(100);
+            animatorSet.playSequentially(animator, animator1);
+            animators.add(animatorSet);
             delay+=animator.getDuration();
         }
 

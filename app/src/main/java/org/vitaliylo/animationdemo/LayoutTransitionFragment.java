@@ -85,14 +85,7 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
                         LayoutTransition.CHANGE_APPEARING |
                         LayoutTransition.CHANGE_DISAPPEARING);
 
-//                PropertyValuesHolder pvhScrollX = PropertyValuesHolder.ofFloat("scaleX", 0f, 1f);
-//                PropertyValuesHolder pvhScrollY = PropertyValuesHolder.ofFloat("scaleY", 0f, 1f);
-//                Animator appear = ObjectAnimator.ofPropertyValuesHolder((Object) null, pvhScrollX, pvhScrollY);
-//                appear.setInterpolator(new OvershootInterpolator());
-
-
                 AnimatorSet appear = new AnimatorSet();
-//                appear.setInterpolator(new OvershootInterpolator());
                 {
                     ObjectAnimator fall = ObjectAnimator.ofPropertyValuesHolder((Object) null,
                             PropertyValuesHolder.ofFloat("alpha", 0f, 1f, 1f, 1f, 1f), // more points to finish faster

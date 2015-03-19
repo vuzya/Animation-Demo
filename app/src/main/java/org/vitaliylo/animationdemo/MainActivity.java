@@ -51,8 +51,11 @@ public class MainActivity extends ActionBarActivity
                 fragment = new LayoutTransitionFragment();
                 break;
             case 2:
-            default:
                 fragment = new PropertyAnimatorFragment();
+                break;
+            case 3:
+                fragment = new SceneAnimationFragmen();
+            default:
         }
         fragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)

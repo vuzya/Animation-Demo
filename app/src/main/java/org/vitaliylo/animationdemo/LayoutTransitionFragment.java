@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
@@ -71,6 +72,8 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
                         transtionContainer.removeView(v);
                     }
                 });
+                btn.setCameraDistance(3000);
+//                btn.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                 transtionContainer.addView(btn, 0, new ViewGroup.LayoutParams(500, ViewGroup.LayoutParams.WRAP_CONTENT));
                 break;
             case 3: {
@@ -93,15 +96,15 @@ public class LayoutTransitionFragment extends android.support.v4.app.Fragment {
                 {
                     ObjectAnimator fall = ObjectAnimator.ofPropertyValuesHolder((Object) null,
                             PropertyValuesHolder.ofFloat("alpha", 0f, 1f, 1f, 1f, 1f), // more points to finish faster
-                            PropertyValuesHolder.ofFloat("scaleX", 1.75f, 1f),
-                            PropertyValuesHolder.ofFloat("scaleY", 1.75f, 1f),
-//                            PropertyValuesHolder.ofFloat("translationZ", 250f, 0f),
+                            PropertyValuesHolder.ofFloat("scaleX", 1.25f, 1f),
+                            PropertyValuesHolder.ofFloat("scaleY", 1.25f, 1f),
+                            PropertyValuesHolder.ofFloat("translationZ", 500f, 0f),
                             PropertyValuesHolder.ofFloat("translationY", -150f, 0f),
 //                            PropertyValuesHolder.ofFloat("cameraDistance", 500f, 0f),
                             PropertyValuesHolder.ofFloat("rotationY", 45f, -45f, 15f, 0f),
                             PropertyValuesHolder.ofFloat("rotationX", -45f, 55f, -15f, 0f)
                     );
-                    fall.setInterpolator(new DecelerateInterpolator());
+                    fall.setInterpolator(new AccelerateInterpolator());
 
 
                     ObjectAnimator shake = ObjectAnimator.ofFloat((View) null, new ParentPropertyWrapper(new Property<View, Float>(float.class, "scale") {

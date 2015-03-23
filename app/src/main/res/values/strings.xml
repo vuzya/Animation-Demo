@@ -6,6 +6,8 @@
     <string name="title_layout_transitions">Layout Transition</string>
     <string name="title_property_animators">Property Animator</string>
     <string name="title_scene_transitions">Scene Transitions</string>
+    <string name="title_recyclerview">RecyclerView</string>
+    <string name="title_laboratory">Lab</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>

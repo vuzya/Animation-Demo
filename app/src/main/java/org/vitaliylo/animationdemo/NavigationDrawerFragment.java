@@ -106,6 +106,8 @@ public class NavigationDrawerFragment extends Fragment {
                         getString(R.string.title_layout_transitions),
                         getString(R.string.title_property_animators),
                         getString(R.string.title_scene_transitions),
+                        getString(R.string.title_recyclerview),
+                        getString(R.string.title_laboratory),
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;

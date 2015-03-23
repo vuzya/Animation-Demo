@@ -55,6 +55,13 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 3:
                 fragment = new SceneAnimationFragmen();
+                break;
+            case 4:
+                fragment = new RecyclerViewFragment();
+                break;
+            case 5:
+                fragment = new LaboratoryFragment();
+                break;
             default:
         }
         fragmentManager.beginTransaction()
@@ -77,6 +84,9 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 4:
                 mTitle = getString(R.string.title_scene_transitions);
+                break;
+            case 5:
+                mTitle = getString(R.string.title_recyclerview);
                 break;
         }
     }

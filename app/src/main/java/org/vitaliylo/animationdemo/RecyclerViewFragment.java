@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-/**
- * Created by zIrochka on 21.03.2015.
- */
 public class RecyclerViewFragment extends android.support.v4.app.Fragment {
 
     private RecyclerView recycler;
@@ -25,12 +22,37 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recycler = (RecyclerView) view;
-        recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2){
+        recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2) {
             @Override
             public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
                 super.onLayoutChildren(recycler, state);
-                if(state.isPreLayout()){
-                    //recycler.convertPreLayoutPositionToPostLayout() HERE!!!! HERE HERE HERE!!!
+                if (state.isPreLayout()) {
+                    int firstVisible = getPosition(getChildAt(0));
+                    int lastVisible = getPosition(getChildAt(getChildCount() - 1));
+                    int itemCount = getItemCount();
+
+                    int w = getWidth();
+                    int h = getHeight();
+                    View child = getChildAt(0);
+                    int cw = child.getWidth();
+                    int ch = child.getHeight();
+
+                    int top = h / 2 - ch / 2;
+                    int bottom = h / 2 + ch / 2;
+                    boolean before;
+                    for (int i = 0; i < itemCount; i++) {
+                        if ((before = (i < firstVisible)) || i > lastVisible) {
+                            int postLayoutPos = recycler.convertPreLayoutPositionToPostLayout(i);
+                            if (postLayoutPos >= firstVisible && postLayoutPos <= lastVisible) {
+                                View view = null; // Get view somewhere!
+                                if (before) {
+                                    layoutDecorated(view, 0 - cw, top, 0, bottom);
+                                } else {
+                                    layoutDecorated(view, w, top, w + cw, bottom);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });

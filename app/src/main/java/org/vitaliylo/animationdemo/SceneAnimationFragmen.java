@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.CycleInterpolator;
 import android.widget.Button;
 
 /**
@@ -131,7 +132,23 @@ public class SceneAnimationFragmen extends Fragment implements View.OnClickListe
                 };
 //                changeBounds.setDuration(500);
                 set.addTransition(changeBounds);
-                Fade fade = new Fade(Fade.IN) {
+                Fade fade = new Fade(Fade.IN | Fade.OUT) {
+                    @Override
+                    public Animator onDisappear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) {
+                        ObjectAnimator disappear = ObjectAnimator.ofPropertyValuesHolder(view,
+                                PropertyValuesHolder.ofFloat("alpha", 1f, 1f, 1f, 0.75f, 0f),
+                                PropertyValuesHolder.ofFloat("scaleX", 1f, 1.25f, 1f, 0.75f, 1f),
+                                PropertyValuesHolder.ofFloat("scaleY", 1f, 1f, 1.25f, 1f, 0.75f)
+                                );
+//                        view.setPivotX(0f);
+//                        view.setPivotY(0f);
+//                        ObjectAnimator disappear = ObjectAnimator.ofPropertyValuesHolder(view,
+//                                PropertyValuesHolder.ofFloat("rotation", 0f, 60f)
+//                        );
+//                        disappear.setInterpolator(new CycleInterpolator(5));
+                        return disappear;
+                    }
+
                     @Override
                     public Animator onAppear(ViewGroup sceneRoot, TransitionValues startValues, int startVisibility, TransitionValues endValues, int endVisibility) {
                         if ((getMode() & MODE_IN) != MODE_IN || endValues == null) {

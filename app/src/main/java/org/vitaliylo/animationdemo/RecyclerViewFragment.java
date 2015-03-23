@@ -22,7 +22,7 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recycler = (RecyclerView) view;
-        recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2) {
+        recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false) {
             @Override
             public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
                 super.onLayoutChildren(recycler, state);
@@ -44,7 +44,7 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
                         if ((before = (i < firstVisible)) || i > lastVisible) {
                             int postLayoutPos = recycler.convertPreLayoutPositionToPostLayout(i);
                             if (postLayoutPos >= firstVisible && postLayoutPos <= lastVisible) {
-                                View view = null; // Get view somewhere!
+                                View view = recycler.getViewForPosition(i); // Get view somewhere!
                                 if (before) {
                                     layoutDecorated(view, 0 - cw, top, 0, bottom);
                                 } else {
@@ -66,6 +66,7 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
                 Button itemView = new Button(getActivity());
                 RecyclerView.LayoutParams params = recycler.getLayoutManager().generateDefaultLayoutParams();
                 params.height = 500;
+                params.width = 300;
                 itemView.setLayoutParams(params);
                 return new RecyclerView.ViewHolder(itemView) {
                 };

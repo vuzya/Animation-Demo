@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class RecyclerViewFragment extends android.support.v4.app.Fragment {
 
     private RecyclerView recycler;
@@ -21,7 +23,7 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recycler = (RecyclerView) view;
+        recycler = (RecyclerView) view.findViewById(android.R.id.list);
         recycler.setLayoutManager(new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false) {
             @Override
             public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
@@ -46,8 +48,10 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
                             if (postLayoutPos >= firstVisible && postLayoutPos <= lastVisible) {
                                 View view = recycler.getViewForPosition(i); // Get view somewhere!
                                 if (before) {
+                                    addView(view, 0);
                                     layoutDecorated(view, 0 - cw, top, 0, bottom);
                                 } else {
+                                    addView(view);
                                     layoutDecorated(view, w, top, w + cw, bottom);
                                 }
                             }
@@ -61,12 +65,22 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
         recycler.getItemAnimator().setRemoveDuration(1000);
         recycler.getItemAnimator().setMoveDuration(1000);
         recycler.setAdapter(new RecyclerView.Adapter() {
+
+            public final ArrayList<Integer> array;
+
+            {
+                array = new ArrayList<Integer>();
+                for (int i = 0; i < 25; i++) {
+                    array.add(i);
+                }
+            }
+
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                 Button itemView = new Button(getActivity());
                 RecyclerView.LayoutParams params = recycler.getLayoutManager().generateDefaultLayoutParams();
                 params.height = 500;
-                params.width = 300;
+                params.width = 800;
                 itemView.setLayoutParams(params);
                 return new RecyclerView.ViewHolder(itemView) {
                 };
@@ -74,20 +88,23 @@ public class RecyclerViewFragment extends android.support.v4.app.Fragment {
 
             @Override
             public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int i) {
-                ((Button) viewHolder.itemView).setText(Integer.toString(i));
+                final Integer value = array.get(i);
+                ((Button) viewHolder.itemView).setText(Integer.toString(value));
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean b = recycler.getLayoutManager().supportsPredictiveItemAnimations();
-                        Toast.makeText(getActivity(), String.valueOf(b), Toast.LENGTH_LONG).show();
-                        recycler.getAdapter().notifyItemMoved(i, 20);
+//                        boolean b = recycler.getLayoutManager().supportsPredictiveItemAnimations();
+//                        Toast.makeText(getActivity(), String.valueOf(b), Toast.LENGTH_LONG).show();
+                        int from = array.indexOf(value);
+                        array.add(20 - 1, array.remove(from));
+                        recycler.getAdapter().notifyItemMoved(from, 20);
                     }
                 });
             }
 
             @Override
             public int getItemCount() {
-                return 100;
+                return array.size();
             }
         });
     }

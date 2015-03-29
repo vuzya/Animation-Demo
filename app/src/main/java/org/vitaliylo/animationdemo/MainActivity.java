@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.view.View;
 
 
 public class MainActivity extends ActionBarActivity
@@ -127,4 +128,7 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void hideMe(View v){
+        v.setVisibility(View.GONE);
+    }
 }
